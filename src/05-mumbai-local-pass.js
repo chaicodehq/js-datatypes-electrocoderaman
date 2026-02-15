@@ -42,5 +42,49 @@
  *   // => "INVALID PASS"
  */
 export function generateLocalPass(passenger) {
-  // Your code here
+  // Validation: object + required fields + non-empty strings
+  if (
+    typeof passenger !== "object" ||
+    passenger === null ||
+    typeof passenger.name !== "string" ||
+    passenger.name.trim() === "" ||
+    typeof passenger.from !== "string" ||
+    passenger.from.trim() === "" ||
+    typeof passenger.to !== "string" ||
+    passenger.to.trim() === "" ||
+    typeof passenger.classType !== "string" ||
+    passenger.classType.trim() === ""
+  ) {
+    return "INVALID PASS";
+  }
+
+  // Normalize values
+  const name = passenger.name.trim();
+  const from = passenger.from.trim();
+  const to = passenger.to.trim();
+  const clsLower = passenger.classType.trim().toLowerCase();
+
+  // Validate classType
+  if (clsLower !== "first" && clsLower !== "second") {
+    return "INVALID PASS";
+  }
+
+  // Helper: Title Case (first letter uppercase, rest lowercase)
+  const toTitleCase = (str) =>
+    str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+  // Generate Pass ID: first letter of class + first 3 of from + first 3 of to (all uppercase)
+  const passId =
+    clsLower.charAt(0).toUpperCase() +
+    from.slice(0, 3).toUpperCase() +
+    to.slice(0, 3).toUpperCase();
+
+  // Build formatted pass
+  return `MUMBAI LOCAL PASS
+---
+Name: ${name.toUpperCase()}
+From: ${toTitleCase(from)}
+To: ${toTitleCase(to)}
+Class: ${clsLower.toUpperCase()}
+Pass ID: ${passId}`;
 }

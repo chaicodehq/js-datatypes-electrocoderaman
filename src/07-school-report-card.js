@@ -42,4 +42,75 @@
  */
 export function generateReportCard(student) {
   // Your code here
+  if (
+    typeof student !== "object" ||
+    student === null ||
+    typeof student.name !== "string" ||
+    student.name.trim().length === 0 ||
+    typeof student.marks !== "object" ||
+    student.marks === null ||
+    Object.keys(student.marks).length === 0
+  ) {
+    return null;
+  }
+
+  const marksArray = Object.values(student.marks);
+
+  const isValidMarks = marksArray.every(
+    (mark) =>
+      typeof mark === "number" && !isNaN(mark) && mark >= 0 && mark <= 100,
+  );
+
+  if (!isValidMarks) return null;
+
+  const marks = Object.values(student.marks);
+  const totalMarks = marks.reduce((total, curr) => (total += curr), 0);
+
+  const totalSub = Object.keys(student.marks);
+  const decPercentage = (totalMarks / (totalSub.length * 100)) * 100;
+  const percentage = parseFloat(decPercentage.toFixed(2));
+
+  let grade = null;
+
+  if (percentage >= 90) {
+    grade = "A+";
+  } else if (percentage >= 80) {
+    grade = "A";
+  } else if (percentage >= 70) {
+    grade = "B";
+  } else if (percentage >= 60) {
+    grade = "C";
+  } else if (percentage >= 40) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  const highestSubject = Object.entries(student.marks).reduce((max, curr) =>
+    curr[1] > max[1] ? curr : max,
+  )[0];
+
+  const lowestSubject = Object.entries(student.marks).reduce((min, curr) =>
+    curr[1] < min[1] ? curr : min,
+  )[0];
+
+  const passedSubjects = Object.entries(student.marks)
+    .filter(([sub, mark]) => mark >= 40)
+    .map(([sub]) => sub);
+
+  const failedSubjects = Object.entries(student.marks)
+    .filter(([sub, mark]) => mark < 40)
+    .map(([sub]) => sub);
+
+  return {
+    name: student.name,
+    totalMarks: totalMarks,
+    percentage: percentage,
+    grade: grade,
+    highestSubject: highestSubject,
+    lowestSubject: lowestSubject,
+    passedSubjects: passedSubjects,
+    failedSubjects: failedSubjects,
+    subjectCount: totalSub.length,
+  };
 }
